@@ -16,38 +16,6 @@ namespace Elements20BasicSample
         {
             var output = new Elements20BasicSampleOutputs();
 
-            // Create lineworks via override input
-            var lineworks = input.Overrides.Lines.CreateElements(
-                input.Overrides.Additions.Lines,
-                input.Overrides.Removals.Lines,
-                (add) => new Linework(add),
-                (linework, identity) => linework.Match(identity),
-                (linework, edit) => linework.Update(edit)
-            );
-
-            // Create polylineworks via override input
-            var polylineworks = input.Overrides.Polylines.CreateElements(
-              input.Overrides.Additions.Polylines,
-              input.Overrides.Removals.Polylines,
-              (add) => new Polylinework(add),
-              (polylinework, identity) => polylinework.Match(identity),
-              (polylinework, edit) => polylinework.Update(edit)
-            );
-
-            // Create bezierworks via override input
-            var bezierworks = input.Overrides.Beziers.CreateElements(
-              input.Overrides.Additions.Beziers,
-              input.Overrides.Removals.Beziers,
-              (add) => new Bezierwork(add),
-              (bezierwork, identity) => bezierwork.Match(identity),
-              (bezierwork, edit) => bezierwork.Update(edit)
-            );
-
-            // Add drawn lineworks, polylineworks, and bezierworks to the model
-            output.Model.AddElements(lineworks);
-            output.Model.AddElements(polylineworks);
-            output.Model.AddElements(bezierworks);
-
             List<object> curves = new List<object>();
 
             /// CIRCLE
@@ -77,8 +45,8 @@ namespace Elements20BasicSample
 
             var polylineEllipse = new Polyline(points);
 
-            // Add the polyline to the model
-            output.Model.AddElement(new Polylinework("Ellipse Example", polylineEllipse, false));
+            // Add the polyline representation of the ellipse to the model
+            output.Model.AddElement(new Ellipsework("Ellipse Example", polylineEllipse, false));
             var ellipsework = ellipse;
 
             /// BEZIER
@@ -92,16 +60,44 @@ namespace Elements20BasicSample
                     new Vector3(39, 5.01, 0),
                 }
             );
-            var bezierwork = new Bezierwork(bezier);
-            output.Model.AddElement(bezierwork);
-            bezierworks.Add(bezierwork);
+            var bezierPolyline = new Polyline(
+              new List<Vector3>()
+              {
+                  new Vector3(31, 5, 0),
+                  new Vector3(35, 20, 0),
+                  new Vector3(35, -10, 0),
+                  new Vector3(39, 5.01, 0),
+              }
+            );
+            input.Overrides.Additions.Beziers.Add(new BeziersOverrideAddition("Bezier Example", new BeziersIdentity("Bezier Example"), new BeziersOverrideAdditionValue(bezierPolyline)));
+
+            // Create bezierworks via override input
+            var bezierworks = input.Overrides.Beziers.CreateElements(
+              input.Overrides.Additions.Beziers,
+              input.Overrides.Removals.Beziers,
+              (add) => new Bezierwork(add),
+              (bezierwork, identity) => bezierwork.Match(identity),
+              (bezierwork, edit) => bezierwork.Update(edit)
+            );
+
+            output.Model.AddElements(bezierworks);
 
             /// LINE
             // Create a line
             var line = new Line(new Vector3(45, 1, 0), new Vector3(45, 9, 0));
-            var linework = new Linework("Line Example", line);
-            lineworks.Add(linework);
-            output.Model.AddElement(linework);
+            input.Overrides.Additions.Lines.Add(new LinesOverrideAddition("Line Example", new LinesIdentity("Line Example"), new LinesOverrideAdditionValue(line)));
+
+            // Create lineworks via override input
+            var lineworks = input.Overrides.Lines.CreateElements(
+                input.Overrides.Additions.Lines,
+                input.Overrides.Removals.Lines,
+                (add) => new Linework(add),
+                (linework, identity) => linework.Match(identity),
+                (linework, edit) => linework.Update(edit)
+            );
+
+            // Add drawn lineworks to the model
+            output.Model.AddElements(lineworks);
 
             /// POLYLINE
             // Create a polyline
@@ -121,10 +117,19 @@ namespace Elements20BasicSample
                     new Vector3(59, 9, 0),
                 }
             );
+            input.Overrides.Additions.Polylines.Add(new PolylinesOverrideAddition("Polyline Example", new PolylinesIdentity("Polyline Example"), new PolylinesOverrideAdditionValue(polyline)));
 
-            var polylinework = new Polylinework("Polyline Example", polyline);
-            polylineworks.Add(polylinework);
-            output.Model.AddElement(polylinework);
+            // Create polylineworks via override input
+            var polylineworks = input.Overrides.Polylines.CreateElements(
+              input.Overrides.Additions.Polylines,
+              input.Overrides.Removals.Polylines,
+              (add) => new Polylinework(add),
+              (polylinework, identity) => polylinework.Match(identity),
+              (polylinework, edit) => polylinework.Update(edit)
+            );
+
+            // Add drawn polylineworks to the model
+            output.Model.AddElements(polylineworks);
 
             curves.AddRange(lineworks);
             curves.AddRange(polylineworks);
