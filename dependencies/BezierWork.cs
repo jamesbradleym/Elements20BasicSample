@@ -7,7 +7,6 @@ namespace Elements
 {
     public class Bezierwork : GeometricElement
     {
-
         public Bezier Bezier { get; set; }
         [JsonProperty("Add Id")]
         public string AddId { get; set; }
@@ -59,9 +58,6 @@ namespace Elements
             var innerPointRadius = 0.05;
 
             // Create an extruded circle along each line segment of the polyline
-
-            var length = Bezier.Length();
-
             var circle = new Circle(circleRadius).ToPolygon();
 
             // Create an extruded circle along the line
@@ -69,7 +65,6 @@ namespace Elements
 
             rep.SolidOperations.Add(sweep);
 
-            var spheres = new List<Mesh>();
             var points = new List<Vector3>() { Bezier.Start, Bezier.End };
             points.InsertRange(1, Bezier.ControlPoints);
             // Add a spherical point at each vertex of the polyline

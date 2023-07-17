@@ -7,33 +7,13 @@ namespace Elements
 {
     public class Arcwork : GeometricElement
     {
-
         public Arc Arc { get; set; }
-        [JsonProperty("Add Id")]
-        public string AddId { get; set; }
 
-        // public Arcwork(ArcsOverrideAddition add)
-        // {
-        //     this.Arc = add.Value.Arc;
-        //     this.AddId = add.Id;
-
-        //     SetMaterial();
-        // }
         public Arcwork(Arc arc)
         {
             Arc = arc;
             SetMaterial();
         }
-        // public bool Match(CirclesIdentity identity)
-        // {
-        //     return identity.AddId == this.AddId;
-        // }
-
-        // public Circlework Update(CirclesOverride edit)
-        // {
-        //     this.Circle = edit.Value.Circle;
-        //     return this;
-        // }
 
         public void SetMaterial()
         {
@@ -56,9 +36,7 @@ namespace Elements
 
             var arcVertices = new List<Vector3>() { Arc.Start, Arc.End };
 
-            var direction = Arc.PointAt(0) - Arc.PointAt(0.1);
-
-            var circle = Polygon.Circle(circleRadius, 10);
+            var circle = new Elements.Geometry.Circle(Vector3.Origin, circleRadius).ToPolygon(10);
 
             // Create an swept circle along the circle
             var sweep = new Sweep(circle, Arc, 0, 0, 0, false);

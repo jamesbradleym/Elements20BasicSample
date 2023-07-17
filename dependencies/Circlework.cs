@@ -7,33 +7,16 @@ namespace Elements
 {
     public class Circlework : GeometricElement
     {
-
         public Circle Circle { get; set; }
         [JsonProperty("Add Id")]
         public string AddId { get; set; }
 
-        // public Circlework(CirclesOverrideAddition add)
-        // {
-        //     this.Circle = add.Value.Circle;
-        //     this.AddId = add.Id;
-
-        //     SetMaterial();
-        // }
-        public Circlework(Circle circle)
+        public Circlework(string id, Circle circle)
         {
             Circle = circle;
+            this.AddId = id;
             SetMaterial();
         }
-        // public bool Match(CirclesIdentity identity)
-        // {
-        //     return identity.AddId == this.AddId;
-        // }
-
-        // public Circlework Update(CirclesOverride edit)
-        // {
-        //     this.Circle = edit.Value.Circle;
-        //     return this;
-        // }
 
         public void SetMaterial()
         {
@@ -56,10 +39,7 @@ namespace Elements
 
             var circleVertices = new List<Vector3>() { Circle.PointAt(0) };
 
-            var direction = Circle.PointAt(0) - Circle.PointAt(0.1);
-            var length = Math.PI * Math.Pow(Circle.Radius, 2);
-
-            var circle = Polygon.Circle(circleRadius, 10);
+            var circle = new Elements.Geometry.Circle(Vector3.Origin, circleRadius).ToPolygon(10);
 
             // Create an swept circle along the circle
             var sweep = new Sweep(circle, Circle, 0, 0, 0, false);
