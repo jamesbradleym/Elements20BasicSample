@@ -96,18 +96,8 @@ namespace Elements
 
                     foreach (var triangle in sphere.Triangles)
                     {
-                        var vertices = new List<Vector3>();
-
-                        foreach (var tvertex in triangle.Vertices)
-                        {
-                            // Convert Vector3D to Vector3
-                            var vector3 = new Vector3(tvertex.Position.X, tvertex.Position.Y, tvertex.Position.Z);
-                            vertices.Add(vector3);
-                        }
-
-                        // Create a Polygon from the triangle's vertices
-                        var polygon = new Polygon(vertices);
-
+                        // Create a Polygon from the triangle's vertices point
+                        var polygon = new Polygon(triangle.Vertices.SelectMany(v => new List<Vector3> { v.Position }).ToList());
                         solidRep.AddFace(polygon);
                     }
                 }
