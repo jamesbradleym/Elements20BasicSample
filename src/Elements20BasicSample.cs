@@ -51,19 +51,19 @@ namespace Elements20BasicSample
             List<object> curves = new List<object>();
 
             /// CIRCLE
-            // Create circle
+            // Create a circle
             var circle = new Circle(new Vector3(5, 5, 0), 4);
             var circlework = new Circlework(circle);
             output.Model.AddElement(circlework);
 
             /// ARC
-            // Create arc
+            // Create an arc
             var arc = new Arc(new Vector3(15, 5, 0), 4, 0.0, 270.0);
             var arcwork = new Arcwork(arc);
             output.Model.AddElement(arcwork);
 
             /// ELLIPSE
-            // Create ellipse
+            // Create an ellipse
             var ellipse = new Ellipse(new Vector3(25, 5, 0), 2, 4);
             var divisions = 40; // Number of divisions for the polyline ellipse approximation
             var points = new List<Vector3>();
@@ -82,7 +82,7 @@ namespace Elements20BasicSample
             var ellipsework = ellipse;
 
             /// BEZIER
-            // Create bezier
+            // Create a bezier
             var bezier = new Bezier(
                 new List<Vector3>()
                 {
@@ -97,14 +97,14 @@ namespace Elements20BasicSample
             bezierworks.Add(bezierwork);
 
             /// LINE
-            // Create line
+            // Create a line
             var line = new Line(new Vector3(45, 1, 0), new Vector3(45, 9, 0));
             var linework = new Linework(line);
             lineworks.Add(linework);
             output.Model.AddElement(linework);
 
             /// POLYLINE
-            // Create polyline
+            // Create a polyline
             var polyline = new Polyline(
                 new List<Vector3>()
                 {
@@ -137,6 +137,11 @@ namespace Elements20BasicSample
             var directionMod = parameter == 0.0 ? 0.01 : -0.01;
             var size = 1.0;
             var subsize = 0.5;
+
+            var parameterMaterial = new Material("Parameter Material", new Color(0, 0, 0, 0.5));
+            var midMaterial = new Material("Mid Material", new Color(0, 0.5, 0, 0.5));
+            var segmentMaterial = new Material("Segment Material", new Color(0.5, 0, 0, 0.5));
+            var segmentMidMaterial = new Material("Segment Mid Material", new Color(0, 0, 0.5, 0.5));
             foreach (var curve in curves)
             {
                 if (curve is Polylinework _polylinework)
@@ -208,7 +213,7 @@ namespace Elements20BasicSample
                     var midpoint = _polylinework.Polyline.PointAt(midparameter);
                     // Find an appropriate direction to orient our mass
                     var middirection = _polylinework.Polyline.PointAt(midparameter) - _polylinework.Polyline.PointAt(midparameter + directionMod);
-                    var midmass = MassAtPointAndOrientation(size, midpoint, middirection);
+                    var midmass = MassAtPointAndOrientation(size, midpoint, middirection, midMaterial);
                     output.Model.AddElement(midmass);
 
                     if (_polylinework.Polyline.Segments().Count() > 1)
@@ -219,12 +224,12 @@ namespace Elements20BasicSample
                             var segmentpoint = segment.PointAt(parameter * segment.Length());
                             // Find an appropriate direction to orient our mass
                             var segmentdirection = segment.Direction();
-                            var segmentmass = MassAtPointAndOrientation(subsize, segmentpoint, segmentdirection);
+                            var segmentmass = MassAtPointAndOrientation(subsize, segmentpoint, segmentdirection, segmentMaterial);
                             output.Model.AddElement(segmentmass);
 
                             // Find the midpoint
                             var segmentmidpoint = segment.Mid();
-                            var segmentmidmass = MassAtPointAndOrientation(subsize, segmentmidpoint, segmentdirection);
+                            var segmentmidmass = MassAtPointAndOrientation(subsize, segmentmidpoint, segmentdirection, segmentMidMaterial);
                             output.Model.AddElement(segmentmidmass);
                         }
                     }
@@ -289,9 +294,13 @@ namespace Elements20BasicSample
 
         public static Mass MassAtPointAndOrientation(Double size, Vector3 point, Vector3 direction, Material? material = null)
         {
+            // Create a Mass of specified size
             var mass = new Mass(Polygon.Rectangle(size, size), size);
+            // Find the 3D center of the mass
             var center = mass.Bounds.Center() + new Vector3(0, 0, size / 2.0) + mass.Transform.Origin;
+            // Transform the mass to the designated point and direction
             mass.Transform = new Transform(-1 * center).Concatenated(new Transform(new Plane(point, direction)));
+            // Set the mass material if specified
             if (material != null)
             {
                 mass.Material = material;
