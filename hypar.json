@@ -1,0 +1,94 @@
+{
+  "$schema": "https://hypar.io/Schemas/Function.json",
+  "id": "96d1a48a-d74f-438d-8d80-f94d548589b8",
+  "name": "Elements 2.0 Basic Sample",
+  "description": "The Elements20BasicSample function.",
+  "language": "C#",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "Parameter": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0,
+        "$hyparUnitType": "none",
+        "default": 0.5
+      }
+    }
+  },
+  "overrides": {
+    "Lines": {
+      "context": "[*discriminator=Elements.Linework]",
+      "identity": {
+        "Add Id": {
+          "type": "string"
+        }
+      },
+      "behaviors": {
+        "add": {
+          "schema": {
+            "Line": {
+              "$ref": "https://schemas.hypar.io/Line.json"
+            }
+          }
+        },
+        "remove": true
+      },
+      "schema": {
+        "Line": {
+          "$ref": "https://schemas.hypar.io/Line.json"
+        }
+      }
+    },
+    "Polylines": {
+      "context": "[*discriminator=Elements.Polylinework]",
+      "identity": {
+        "Add Id": {
+          "type": "string"
+        }
+      },
+      "behaviors": {
+        "add": {
+          "schema": {
+            "Polyline": {
+              "$ref": "https://schemas.hypar.io/Polyline.json"
+            }
+          }
+        },
+        "remove": true
+      },
+      "schema": {
+        "Polyline": {
+          "$ref": "https://schemas.hypar.io/Polyline.json"
+        }
+      }
+    },
+    "Beziers": {
+      "context": "[*discriminator=Elements.Bezierwork]",
+      "identity": {
+        "Add Id": {
+          "type": "string"
+        }
+      },
+      "behaviors": {
+        "add": {
+          "schema": {
+            "Polyline": {
+              "$ref": "https://schemas.hypar.io/Polyline.json"
+            }
+          }
+        },
+        "remove": true
+      },
+      "schema": {
+        "Polyline": {
+          "$ref": "https://schemas.hypar.io/Polyline.json"
+        }
+      }
+    }
+  },
+  "outputs": [],
+  "repository_url": "https://github.com/hypar-io/function",
+  "last_updated": "0001-01-01T00:00:00",
+  "cli_version": "1.8.0-alpha.1"
+}
